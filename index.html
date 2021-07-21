@@ -12,17 +12,18 @@
 
   <script>
     const initialState = {
-      nome: 'André',
-      id: 199
+      nome: 'Carol',
+      id: 1996
     };
 
     function reducer(state = initialState, action) {
-      return state
+      return state;
     }
 
+    //Reducer = apenas uma função que retorna um {objeto} 
     const store = Redux.createStore(reducer);
     const state = store.getState();
-    console.log(state.nome);
+    console.log(state);
 
   </script>
 </body>
