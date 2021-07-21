@@ -10,6 +10,7 @@
 
 <body>
   <div>
+    <h1>Total: <span id="total"></span></h1>
     <button id="btn">
       Somar
     </button>
@@ -30,7 +31,7 @@
       return { type: INCREMENTAR };
     }
 
-    const initialState = 10;
+    const initialState = 0;
 
     const reducer = (state = initialState, action) => {
       if (action.type === INCREMENTAR) {
@@ -44,10 +45,16 @@
 
     //Reducer = apenas uma função que retorna um {objeto} 
     const store = Redux.createStore(reducer);
-    let state = store.getState();
-  
+    
     state = store.getState();
-    console.log(state)
+    
+    const render = () => {
+      const state = store.getState();
+      const total = document.querySelector('#total');
+      total.innerText = state;
+    }
+
+    store.subscribe(render);
 
     const btn = document.querySelector('#btn');
     btn.addEventListener('click', () => store.dispatch(somar(20)))
