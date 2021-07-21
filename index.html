@@ -9,48 +9,36 @@
 </head>
 
 <body>
-  <div>
-    <button id="btn">
-      Somar
-    </button>
-  </div>
+  <div id="caixa" style="background-color:blue; height: 50px;"></div>
 
   <script>
-
-    //Constantes 
-    const SOMAR = 'SOMAR';
-    const INCREMENTAR = 'INCREMENTAR';
-
-    //Action Creator
-    const somar = (payload) => {
-      return {type: SOMAR, payload}
-    }
-
-    function incrementar() {
-      return { type: INCREMENTAR };
-    }
-
-    const initialState = 10;
-
-    const reducer = (state = initialState, action) => {
-      if (action.type === INCREMENTAR) {
-        return state + 1;
+    function reducer(state = 0, action) {
+      switch (action.type) {
+        case 'MODIFICAR_WIDTH':
+          // O reducer atualiza apenas o estado
+          return action.payload;
+        default:
+          return state;
       }
-      if (action.type === SOMAR) {
-        return state + action.payload;
-      }
-      return state;
     }
+    const store = Redux.createStore(
+      reducer,
+      window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
+    );
 
-    //Reducer = apenas uma função que retorna um {objeto} 
-    const store = Redux.createStore(reducer);
-    let state = store.getState();
-  
-    state = store.getState();
-    console.log(state)
-
-    const btn = document.querySelector('#btn');
-    btn.addEventListener('click', () => store.dispatch(somar(20)))
+    function render() {
+      // O dom é manipulado pela função de renderização.
+      // No caso do React seria dentro do componente.
+      const caixa = document.getElementById('caixa');
+      const state = store.getState();
+      caixa.style.width = store.getState() + 'px';
+    }
+    store.subscribe(render);
+    store.dispatch({ type: 'MODIFICAR_WIDTH', payload: 50 });
+    store.dispatch({ type: 'MODIFICAR_WIDTH', payload: 100 });
+    store.dispatch({ type: 'MODIFICAR_WIDTH', payload: 200 });
+    store.dispatch({ type: 'MODIFICAR_WIDTH', payload: 500 });
+    
   </script>
 </body>
 
