@@ -9,78 +9,36 @@
 </head>
 
 <body>
-  <div>
-    <h1>Total: <span id="total"></span></h1>
-    <button id="btn">Somar</button>
-    <button id="open">Abrir</button>
-    <button id="close">Fechar</button>
-  </div>
+  <div id="caixa" style="background-color:blue; height: 50px;"></div>
 
   <script>
-
-    //Constantes 
-    const SOMAR = 'SOMAR';
-    const INCREMENTAR = 'INCREMENTAR';
-
-    //Action Creator
-    const somar = (payload) => {
-      return {type: SOMAR, payload}
-    }
-
-    function incrementar() {
-      return { type: INCREMENTAR };
-    }
-
-    const initialState = 0;
-
-    const contador = (state = initialState, action) => {
-      switch(action.type) {
-        case INCREMENTAR: 
-          return state + 1;
-        case SOMAR: 
-          return state + action.payload;
+    function reducer(state = 0, action) {
+      switch (action.type) {
+        case 'MODIFICAR_WIDTH':
+          // O reducer atualiza apenas o estado
+          return action.payload;
         default:
           return state;
-      } 
-    }
-
-    const modal = (state = false, action) => {
-      switch(action.type) {
-        case 'ABRIR': 
-          return true;
-        case 'FECHAR': 
-          return false;
-        default:
-          return state;
-      } 
-    }
-
-    const reducer = Redux.combineReducers({contador, modal})
-
-    //Reducer = apenas uma função que retorna um {objeto} 
-    const store = Redux.createStore(reducer);
-    
-    state = store.getState();
-    
-    const render = () => {
-      const {contador,modal} = store.getState();
-      const total = document.querySelector('#total');
-      total.innerText = contador;
-      if(modal) {
-        total.style.display = 'block' 
-      }else {
-        total.style.display = 'none';
       }
     }
+    const store = Redux.createStore(
+      reducer,
+      window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
+    );
 
+    function render() {
+      // O dom é manipulado pela função de renderização.
+      // No caso do React seria dentro do componente.
+      const caixa = document.getElementById('caixa');
+      const state = store.getState();
+      caixa.style.width = store.getState() + 'px';
+    }
     store.subscribe(render);
-
-    const btn   = document.querySelector('#btn');
-    const abrir = document.querySelector('#open');
-    const fechar = document.querySelector('#close');
-    btn.addEventListener('click', () => store.dispatch(somar(20)))
-    abrir.addEventListener('click', () => store.dispatch({type: 'ABRIR'}))
-    fechar.addEventListener('click', () => store.dispatch({type: 'FECHAR'}))
+    store.dispatch({ type: 'MODIFICAR_WIDTH', payload: 50 });
+    store.dispatch({ type: 'MODIFICAR_WIDTH', payload: 100 });
+    store.dispatch({ type: 'MODIFICAR_WIDTH', payload: 200 });
+    store.dispatch({ type: 'MODIFICAR_WIDTH', payload: 500 });
+    
   </script>
 </body>
 
