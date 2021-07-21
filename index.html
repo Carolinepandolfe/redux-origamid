@@ -11,9 +11,9 @@
 <body>
   <div>
     <h1>Total: <span id="total"></span></h1>
-    <button id="btn">
-      Somar
-    </button>
+    <button id="btn">Somar</button>
+    <button id="open">Abrir</button>
+    <button id="close">Fechar</button>
   </div>
 
   <script>
@@ -33,15 +33,29 @@
 
     const initialState = 0;
 
-    const reducer = (state = initialState, action) => {
-      if (action.type === INCREMENTAR) {
-        return state + 1;
-      }
-      if (action.type === SOMAR) {
-        return state + action.payload;
-      }
-      return state;
+    const contador = (state = initialState, action) => {
+      switch(action.type) {
+        case INCREMENTAR: 
+          return state + 1;
+        case SOMAR: 
+          return state + action.payload;
+        default:
+          return state;
+      } 
     }
+
+    const modal = (state = false, action) => {
+      switch(action.type) {
+        case 'ABRIR': 
+          return true;
+        case 'FECHAR': 
+          return false;
+        default:
+          return state;
+      } 
+    }
+
+    const reducer = Redux.combineReducers({contador, modal})
 
     //Reducer = apenas uma função que retorna um {objeto} 
     const store = Redux.createStore(reducer);
@@ -49,15 +63,24 @@
     state = store.getState();
     
     const render = () => {
-      const state = store.getState();
+      const {contador,modal} = store.getState();
       const total = document.querySelector('#total');
-      total.innerText = state;
+      total.innerText = contador;
+      if(modal) {
+        total.style.display = 'block' 
+      }else {
+        total.style.display = 'none';
+      }
     }
 
     store.subscribe(render);
 
-    const btn = document.querySelector('#btn');
+    const btn   = document.querySelector('#btn');
+    const abrir = document.querySelector('#open');
+    const fechar = document.querySelector('#close');
     btn.addEventListener('click', () => store.dispatch(somar(20)))
+    abrir.addEventListener('click', () => store.dispatch({type: 'ABRIR'}))
+    fechar.addEventListener('click', () => store.dispatch({type: 'FECHAR'}))
   </script>
 </body>
 
