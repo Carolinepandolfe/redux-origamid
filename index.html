@@ -10,50 +10,13 @@
 </head>
 
 <body>
-  <script>
-
-    const initialState = {
-      nome: "Caroline",
-      idade: 25
-    }
-
-    const reducer = immer.produce((state, action) => {
-      switch (action.type) {
-        case 'MUDAR_NOME':
-          return { ...state, nome: action.payload };
-      }
-    }, initialState);
-
-    // Sem o Immer
-    // const reducer = (state = initialState, action) => {
-    //   switch (action.type) {
-    //     case 'MUDAR_NOME':
-    //       return { ...state, nome: action.payload };
-    //     case 'MUDAR_IDADE':
-    //       return {
-    //         ...state,
-    //         sobre: {
-    //           ...state.sobre,
-    //           dados: {
-    //             ...state.sobre.dados,
-    //             idade: action.payload,
-    //           },
-    //         },
-    //       };
-    //     default:
-    //       return state;
-    //   }
-    // };
-
-    const store = Redux.createStore(
-      reducer,
-      window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
-    );
-
-    store.dispatch({ type: "MUDAR_NOME", payload: "Peleba" });
-    store.dispatch({ type: "MUDAR_NOME", payload: "bvhgccv" });
-    store.dispatch({ type: "MUDAR_NOME", payload: "utrejk" });
-
+  <script type="module">
+    import store from './store/configureStore.js'
+    import { incrementar } from './store/contador.js'
+    store.subscribe(() => {
+      console.log('Funcionou')
+    })
+    store.dispatch(incrementar());
   </script>
 </body>
 
