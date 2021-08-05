@@ -5,18 +5,40 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Redux</title>
-  <script src="./redux.min.js"></script>
   <script src="./immer.umd.production.min.js"></script>
+  <script src="./redux.min.js"></script>
 </head>
 
 <body>
+  <h1 id="aulas"></h1>
+  <h1 id="aluno"></h1>
+
   <script type="module">
-    import store from './store/configureStore.js'
-    import { incrementar } from './store/contador.js'
-    store.subscribe(() => {
-      console.log('Funcionou')
-    })
-    store.dispatch(incrementar());
+    import store from './store/configureStore.js';
+    import { incrementarTempo, reduzirTempo, modificarEmail } from './store/alunos.js';
+    import { completarAula, completarCurso, resetarCurso } from './store/aulas.js';
+
+    const render = () => {
+      const { aula, aluno } = store.getState();
+      const aulasRender = document.querySelector('#aulas');
+      const aulunoRender = document.querySelector('#aluno');
+
+      console.log(aluno)
+
+      aulunoRender.innerText = `${aluno.nome} - ${aluno.email} - ${aluno.dias}`;
+      aulasRender.innerText = aula.filter((aula) => aula.completa === true).length;
+    }
+
+    render();
+    store.subscribe(render);
+
+    store.dispatch(resetarCurso());
+    store.dispatch(completarAula(3));
+    store.dispatch(completarCurso());
+    store.dispatch(reduzirTempo());
+    store.dispatch(incrementarTempo());
+    store.dispatch(incrementarTempo());
+    store.dispatch(modificarEmail('carol@ine.com'));
   </script>
 </body>
 
