@@ -5,41 +5,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Redux</title>
+  <script src="./immer.umd.production.min.js"></script>
   <script src="./redux.min.js"></script>
+  <script src="./script.js"></script>
 </head>
 
 <body>
-  <div id="caixa" style="background-color:blue; height: 50px;"></div>
-
-  <script>
-    function reducer(state = 0, action) {
-      switch (action.type) {
-        case 'MODIFICAR_WIDTH':
-          // O reducer atualiza apenas o estado
-          return action.payload;
-        default:
-          return state;
-      }
-    }
-    const store = Redux.createStore(
-      reducer,
-      window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
-    );
-
-    function render() {
-      // O dom é manipulado pela função de renderização.
-      // No caso do React seria dentro do componente.
-      const caixa = document.getElementById('caixa');
-      const state = store.getState();
-      caixa.style.width = store.getState() + 'px';
-    }
-    store.subscribe(render);
-    store.dispatch({ type: 'MODIFICAR_WIDTH', payload: 50 });
-    store.dispatch({ type: 'MODIFICAR_WIDTH', payload: 100 });
-    store.dispatch({ type: 'MODIFICAR_WIDTH', payload: 200 });
-    store.dispatch({ type: 'MODIFICAR_WIDTH', payload: 500 });
-    
-  </script>
+  
 </body>
 
 </html>
