@@ -1,42 +1,49 @@
-const reducer = (state = 0, action) => {
+const initialState = {
+  loading: false,
+  data: null,
+  error: null
+}
+
+const reducer = (state = initialState, action) => {
   switch(action.type) {
-    case 'INCREMENTAR':
-      return state + 1;
-    case 'REDUZIR':
-      return state - 1;
+    case 'FETCH_STARTED':
+      return { ...state, loading: true};
+    case 'FETCH_SUCCESS':
+      return {...state, data: action.payload, loading: false};
+    case 'FETCH_ERRROR':
+      return {...state, error: action.payload, loading: false}  
     default:
       return state;     
   }
 }
 
-const logger = (store) => (next) => (action) => {
-  const result = next(action)
-  console.log(action);
-  return result;
-}
-
-const teste = (store) => (next) => (action) => {
-  if(action.type === 'REDUZIR') {
-    window.alert('REDUZIR');
+const thunk = (store) => (next) => (action) => {
+  if(typeof action === 'function') {
+    return action(store.dispatch, store.getState);
   }
-  return next(action)
+  return next(action);
 }
 
 const { applyMiddleware, compose } = Redux;
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
-const enhancer = composeEnhancers(applyMiddleware(logger, teste));
+const enhancer = composeEnhancers(applyMiddleware(thunk));
 
 const store = Redux.createStore(reducer, enhancer);
 
-const middleware = Redux.applyMiddleware(logger);
+const fetchUrl = (url) => {
+  return async (dispatch) => {
+    try {
+      dispatch({ type: 'FETCH_STARTED'});
+      const data = await fetch(url).then(res => res.json());
+      dispatch({ type: 'FETCH_SUCCESS', payload: data})
+    } catch (error) {
+      dispatch({ type: 'FETCH_ERROR', payload: error.message });
+    }
+  }
+}
 
-store.dispatch({type:'INCREMENTAR'})
-store.dispatch({type:'INCREMENTAR'})
-store.dispatch({type:'INCREMENTAR'})
-store.dispatch({type:'INCREMENTAR'})
-store.dispatch({type:'INCREMENTAR'})
-
-console.log(store.getState());
-teste()
+store.dispatch(
+  fetchUrl('https://dogsapi.origamid.dev/json/api/photo')
+)
