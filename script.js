@@ -1,6 +1,14 @@
+const getLocalStorage = (key, initial) => {
+  try{
+    return JSON.parse(localStorage.getItem(key))
+  } catch (error) {
+    return initial;
+  }
+}
+
 const initialState = {
   loading: false,
-  data: null,
+  data: getLocalStorage('data', null),
   error: null
 }
 
@@ -24,11 +32,21 @@ const thunk = (store) => (next) => (action) => {
   return next(action);
 }
 
+const localStorageF = (store) => (next) => (action) => {
+  const result = next(action);
+  if(action.localStorage !== undefined){
+    console.log(action)
+    localStorage.setItem(action.localStorage, JSON.stringify(action.payload))
+    return null;
+  }
+  return result;
+}
+
 const { applyMiddleware, compose } = Redux;
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
-const enhancer = composeEnhancers(applyMiddleware(thunk));
+const enhancer = composeEnhancers(applyMiddleware(thunk, localStorageF));
 
 const store = Redux.createStore(reducer, enhancer);
 
@@ -37,13 +55,17 @@ const fetchUrl = (url) => {
     try {
       dispatch({ type: 'FETCH_STARTED'});
       const data = await fetch(url).then(res => res.json());
-      dispatch({ type: 'FETCH_SUCCESS', payload: data})
+      dispatch({ type: 'FETCH_SUCCESS', payload: data, localStorage:'data'})
     } catch (error) {
       dispatch({ type: 'FETCH_ERROR', payload: error.message });
     }
   }
 }
 
-store.dispatch(
-  fetchUrl('https://dogsapi.origamid.dev/json/api/photo')
-)
+const state = store.getState();
+
+if(state.data === null) {
+  store.dispatch(
+    fetchUrl('https://dogsapi.origamid.dev/json/api/photo'),
+  )
+}
